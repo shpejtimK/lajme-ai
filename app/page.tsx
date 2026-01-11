@@ -14,6 +14,7 @@ interface NewsItem {
   categories: string[];
   imageUrl: string | null;
   guid: string;
+  source: string;
 }
 
 interface NewsFeed {
@@ -31,6 +32,12 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [isBenefiteAdHidden, setIsBenefiteAdHidden] = useState(false);
+
+  // Hide/show ad (temporary, no localStorage)
+  const toggleBenefiteAd = () => {
+    setIsBenefiteAdHidden(!isBenefiteAdHidden);
+  };
 
   // Fetch news from API
   const fetchNews = async (isRefresh = false) => {
@@ -91,6 +98,51 @@ export default function Home() {
   return (
     <main className="main-container">
       <ThemeToggle />
+      
+      {/* Partners Section - Top Right */}
+      <div className={`partners-section ${isBenefiteAdHidden ? 'partners-hidden' : ''}`}>
+        {!isBenefiteAdHidden && (
+          <>
+            <button 
+              className="partners-close-button"
+              onClick={toggleBenefiteAd}
+              aria-label="Fshih partnerët"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="partners-content">
+              <h4 className="partners-title">Partneret:</h4>
+              <a 
+                href="https://benefite.net" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="partner-item"
+              >
+                <img 
+                  src="/benefite-logo3.svg" 
+                  alt="Benefite Logo" 
+                  className="partner-logo"
+                />
+                <span className="partner-name">Benefite</span>
+              </a>
+            </div>
+          </>
+        )}
+        {isBenefiteAdHidden && (
+          <button 
+            className="partners-show-button"
+            onClick={toggleBenefiteAd}
+            aria-label="Shfaq partnerët"
+            title="Shfaq partnerët"
+          >
+            <span>Partneret</span>
+          </button>
+        )}
+      </div>
+      
       {/* Modern Header with Logo */}
       <header className="header">
         <div className="header-background"></div>
@@ -101,7 +153,7 @@ export default function Home() {
           </div>
           <div className="header-right">
             <p className="intro-text">
-              Lajme-AI përdor inteligjencë artificiale për të mbledhur lajmet nga të gjitha portalet dhe për t'ju prezantuar ato në mënyrë të qartë, të balancuar dhe plotësisht neutrale, pa asnjë ndikim politik, komercial apo të çfarëdo lloji tjetër.
+              Lajme-AI i mbledh lajmet nga të gjitha portalet dhe i modifikon me Inteligjencë Artificiale për t'i paraqitur në mënyrë neutrale, pa asnjë ndikim politik, komercial apo të çfarëdo lloji tjetër.
             </p>
           </div>
         </div>
@@ -207,6 +259,9 @@ export default function Home() {
                         <polyline points="12 6 12 12 16 14" />
                       </svg>
                       <span>{formatDate(item.pubDate)}</span>
+                    </div>
+                    <div className="news-card-source">
+                      <span className="source-badge">{item.source}</span>
                     </div>
                   </div>
 

@@ -14,6 +14,7 @@ interface NewsItem {
   categories: string[];
   imageUrl: string | null;
   guid: string;
+  source: string;
 }
 
 /**
@@ -140,6 +141,9 @@ export default function ArticlePage() {
                 <polyline points="12 6 12 12 16 14" />
               </svg>
               <span>{formatDate(article.pubDate)}</span>
+            </div>
+            <div className="article-source">
+              <span className="source-badge">{article.source}</span>
             </div>
           </div>
 

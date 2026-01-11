@@ -17,6 +17,7 @@ const parser = new Parser({
 // RSS feed URLs
 const RSS_FEEDS = [
   'https://telegrafi.com/feeds/feed.rss',
+  'https://insajderi.org/feed/',
 ];
 
 /**
@@ -30,6 +31,59 @@ async function fetchFeed(url: string) {
     console.error(`Error fetching feed from ${url}:`, error);
     return null;
   }
+}
+
+
+// Categories to exclude (non-news categories)
+const excludedCategories = [
+  'sport', 'sports', 'futboll', 'basketboll', 'tenis', 'tennis', 'futbol',
+  'art', 'arte', 'kulturë', 'kulture', 'kulturi', 'culture', 'kultura',
+  'showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje',
+  'horoskop', 'horoscope', 'astro', 'astrologji', 'astrology',
+  'lifestyle', 'jetë', 'jetes', 'mode', 'fashion',
+  'auto', 'automotive', 'makina', 'car', 'cars',
+  'gastronomi', 'gastronomy', 'ushqim', 'food', 'receta', 'recipe',
+  'magazine', 'revistë', 'revista',
+];
+
+/**
+ * Helper function to check if item should be excluded based on categories
+ */
+function isExcludedCategory(item: any): boolean {
+  const categories = item.categories || [];
+  
+  // If no categories, include it (assume it's news)
+  if (categories.length === 0) {
+    return false;
+  }
+  
+  // Check if any category matches excluded categories
+  for (const category of categories) {
+    // Normalize category to string (RSS parser sometimes returns objects)
+    let categoryStr = '';
+    if (typeof category === 'string') {
+      categoryStr = category;
+    } else if (category && typeof category === 'object') {
+      // Handle RSS parser objects with _ (text) or $ (attributes)
+      categoryStr = category._ || category['#text'] || (category.$ && category.$.term) || String(category);
+    } else {
+      categoryStr = String(category);
+    }
+    
+    const normalizedCategory = categoryStr.toLowerCase().trim();
+    
+    // Check against excluded categories (case-insensitive partial match)
+    for (const excluded of excludedCategories) {
+      if (normalizedCategory === excluded || 
+          normalizedCategory.includes(excluded) || 
+          excluded.includes(normalizedCategory)) {
+        return true; // Exclude this item
+      }
+    }
+  }
+  
+  // If no excluded categories found, include it
+  return false;
 }
 
 /**
@@ -49,119 +103,35 @@ export async function GET() {
       throw new Error('No feeds could be fetched');
     }
 
-    // Combine all items from all feeds
+    // Combine all items from all feeds with source tracking
     const allItems: any[] = [];
-    validFeeds.forEach(feed => {
+    feeds.forEach((feed, index) => {
       if (feed && feed.items) {
-        allItems.push(...feed.items);
+        const feedUrl = RSS_FEEDS[index];
+        // Determine source name from URL
+        let sourceName = 'Unknown';
+        if (feedUrl.includes('telegrafi.com')) {
+          sourceName = 'Telegrafi';
+        } else if (feedUrl.includes('insajderi.org')) {
+          sourceName = 'Insajderi';
+        }
+        
+        // Add source to each item
+        feed.items.forEach((item: any) => {
+          allItems.push({
+            ...item,
+            _source: sourceName
+          });
+        });
       }
     });
-
-    // Helper function to normalize title for comparison
-    function normalizeTitle(title: string): string {
-      return title
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s]/g, '') // Remove punctuation
-        .replace(/\s+/g, ' ') // Normalize whitespace
-        .substring(0, 100); // Take first 100 chars for comparison
-    }
     
-    // Helper function to check if titles are similar (for duplicate detection)
-    function areTitlesSimilar(title1: string, title2: string): boolean {
-      const norm1 = normalizeTitle(title1);
-      const norm2 = normalizeTitle(title2);
-      
-      // Exact match
-      if (norm1 === norm2) return true;
-      
-      // Check if one title contains most of the other (80% similarity)
-      const longer = norm1.length > norm2.length ? norm1 : norm2;
-      const shorter = norm1.length > norm2.length ? norm2 : norm1;
-      
-      if (shorter.length < 20) return false; // Too short to compare
-      
-      // Check word overlap
-      const words1 = norm1.split(/\s+/).filter(w => w.length > 3);
-      const words2 = norm2.split(/\s+/).filter(w => w.length > 3);
-      
-      if (words1.length === 0 || words2.length === 0) return false;
-      
-      const commonWords = words1.filter(w => words2.includes(w));
-      const similarity = commonWords.length / Math.max(words1.length, words2.length);
-      
-      return similarity > 0.6; // 60% word overlap indicates duplicate
-    }
-    
-    // Categories to exclude (non-news categories)
-    const excludedCategories = [
-      'sport', 'sports', 'futboll', 'basketboll', 'tenis', 'tennis', 'futbol',
-      'art', 'arte', 'kulturë', 'kulture', 'kulturi', 'culture', 'kultura',
-      'showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje',
-      'horoskop', 'horoscope', 'astro', 'astrologji', 'astrology',
-      'lifestyle', 'jetë', 'jetes', 'mode', 'fashion',
-      'auto', 'automotive', 'makina', 'car', 'cars',
-      'gastronomi', 'gastronomy', 'ushqim', 'food', 'receta', 'recipe',
-      'magazine', 'revistë', 'revista',
-    ];
-    
-    // Helper function to check if item should be excluded based on categories
-    function isExcludedCategory(item: any): boolean {
-      const categories = item.categories || [];
-      
-      // If no categories, include it (assume it's news)
-      if (categories.length === 0) {
-        return false;
-      }
-      
-      // Check if any category matches excluded categories
-      for (const category of categories) {
-        const normalizedCategory = category.toLowerCase().trim();
-        
-        // Check against excluded categories (case-insensitive partial match)
-        for (const excluded of excludedCategories) {
-          if (normalizedCategory === excluded || 
-              normalizedCategory.includes(excluded) || 
-              excluded.includes(normalizedCategory)) {
-            return true; // Exclude this item
-          }
-        }
-      }
-      
-      // If no excluded categories found, include it
-      return false;
-    }
-    
-    // Track seen items to avoid duplicates
-    const seenLinks = new Set<string>();
-    const seenTitles: string[] = [];
-    
-    // Transform the feed data to a cleaner format and remove duplicates
+    // Filter out non-news categories only (no duplicate detection)
     const filteredItems = allItems.filter((item) => {
-        // First, filter out non-news categories
+        // Filter out non-news categories
         if (isExcludedCategory(item)) {
           return false;
         }
-        
-        const link = item.link || '';
-        const title = item.title || '';
-        
-        // Check for duplicate link (most reliable)
-        if (link && seenLinks.has(link)) {
-          return false;
-        }
-        
-        // Check for similar titles
-        const normalizedTitle = normalizeTitle(title);
-        for (const seenTitle of seenTitles) {
-          if (areTitlesSimilar(title, seenTitle)) {
-            return false;
-          }
-        }
-        
-        // Mark as seen
-        if (link) seenLinks.add(link);
-        if (normalizedTitle) seenTitles.push(title); // Store original for comparison
         
         return true;
       });
@@ -283,16 +253,84 @@ export async function GET() {
         finalImageUrl = `/api/image-proxy?url=${encodeURIComponent(imageUrl)}${refererParam}`;
       }
 
+      // Normalize categories to strings (RSS parser sometimes returns objects)
+      // Helper function to extract string from category object
+      const extractCategoryString = (cat: any): string => {
+        if (typeof cat === 'string') {
+          return cat;
+        }
+        if (!cat || typeof cat !== 'object') {
+          return '';
+        }
+        // Try various properties that RSS parsers use
+        if (cat._ !== undefined) {
+          if (typeof cat._ === 'string') {
+            return cat._;
+          }
+          if (typeof cat._ === 'object' && cat._._ && typeof cat._._ === 'string') {
+            return cat._._;
+          }
+        }
+        if (cat['#text'] && typeof cat['#text'] === 'string') {
+          return cat['#text'];
+        }
+        if (cat.$ && cat.$ && typeof cat.$ === 'object') {
+          if (cat.$.term && typeof cat.$.term === 'string') {
+            return cat.$.term;
+          }
+        }
+        // Last resort: return empty string to filter out
+        return '';
+      };
+      
+      const normalizedCategories = (item.categories || [])
+        .map(extractCategoryString)
+        .filter((cat: string) => cat && typeof cat === 'string' && cat.trim().length > 0);
+
+      // Helper function to normalize field values to strings
+      const normalizeField = (value: any): string => {
+        if (value === null || value === undefined) {
+          return '';
+        }
+        if (typeof value === 'string') {
+          return value;
+        }
+        if (typeof value === 'number' || typeof value === 'boolean') {
+          return String(value);
+        }
+        if (value && typeof value === 'object') {
+          // Handle RSS parser objects with _ (text) or $ (attributes)
+          // Try various properties that RSS parsers use
+          if (value._ && typeof value._ === 'string') {
+            return value._;
+          }
+          if (value['#text'] && typeof value['#text'] === 'string') {
+            return value['#text'];
+          }
+          if (value.$ && value.$.term && typeof value.$.term === 'string') {
+            return value.$.term;
+          }
+          // If _ exists but is an object, try to stringify it
+          if (value._) {
+            return String(value._);
+          }
+          // Last resort: convert to string
+          return String(value);
+        }
+        return String(value || '');
+      };
+
       return {
-        title: item.title || 'No title',
-        link: item.link || '',
+        title: normalizeField(item.title) || 'No title',
+        link: normalizeField(item.link) || '',
         description: description,
         fullContent: fullContent, // Full article content with HTML
-        pubDate: item.pubDate || '',
-        creator: item.creator || 'Unknown',
-        categories: item.categories || [],
+        pubDate: normalizeField(item.pubDate) || '',
+        creator: normalizeField(item.creator) || 'Unknown',
+        categories: normalizedCategories,
         imageUrl: finalImageUrl,
-        guid: item.guid || item.link || '',
+        guid: normalizeField(item.guid) || normalizeField(item.link) || '',
+        source: item._source || 'Unknown', // Source portal name
       };
       })
     );
