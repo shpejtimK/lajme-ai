@@ -209,6 +209,9 @@ export default function Home() {
                 key={item.guid}
                 className="news-card"
                 style={{ animationDelay: `${index * 0.05}s` }}
+                onClick={() => {
+                  window.location.href = `/article/${encodeURIComponent(item.guid)}`;
+                }}
               >
                 {/* Image with overlay gradient */}
                 {item.imageUrl && (

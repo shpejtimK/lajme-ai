@@ -755,16 +755,27 @@ if (!imageUrl) {
       }
       
       // Clean description for preview (first 300 chars)
-      let description = fullContent;
+      // Use fullContent if available, otherwise fall back to RSS description
+      let description = fullContent || item.description || item.content || item.contentSnippet || '';
       // Remove HTML tags for preview
       description = description.replace(/<[^>]*>/g, '').trim();
       // Decode HTML entities in description
+      // First decode numeric entities
       description = description.replace(/&#(\d+);/g, (_match: string, dec: string) => {
         return String.fromCharCode(parseInt(dec, 10));
       });
+      // Decode hexadecimal entities
       description = description.replace(/&#x([0-9a-fA-F]+);/g, (_match: string, hex: string) => {
         return String.fromCharCode(parseInt(hex, 16));
       });
+      // Decode Albanian-specific named entities (for Bota Sot and other sources)
+      description = description.replace(/&euml;/g, 'ë');
+      description = description.replace(/&Euml;/g, 'Ë');
+      description = description.replace(/&ccedil;/g, 'ç');
+      description = description.replace(/&Ccedil;/g, 'Ç');
+      description = description.replace(/&uuml;/g, 'ü');
+      description = description.replace(/&Uuml;/g, 'Ü');
+      // Decode common named entities
       description = description.replace(/&quot;/g, '"');
       description = description.replace(/&apos;/g, "'");
       description = description.replace(/&amp;/g, '&');
@@ -782,9 +793,37 @@ if (!imageUrl) {
       description = description.replace(/The\s+post[\s\S]+?[.!?]\s*/gi, '');
       // Remove extra whitespace and newlines
       description = description.replace(/\s+/g, ' ').trim();
-      // Limit preview description length
+      
+      // CRITICAL: Always ensure description is max 300 characters (296 text + 1 space + 3 dots)
+      // The description field has a maximum length of 300 characters
+      // Strategy: Truncate to 296 chars max, then add " ..." to make exactly 300 total
+      
+      // First, remove any existing trailing dots, ellipsis, or whitespace
+      description = description.replace(/[.\u2026]+\s*$/, '').trim();
+      
+      // Truncate to exactly 296 characters (reserving 4 for " ..." - 1 space + 3 dots)
+      if (description.length > 296) {
+        // Truncate to 296 chars, try to cut at word boundary for better readability
+        let truncated = description.substring(0, 296);
+        // Try to find the last space to avoid cutting words
+        const lastSpace = truncated.lastIndexOf(' ');
+        if (lastSpace > 250) {
+          truncated = truncated.substring(0, lastSpace);
+        }
+        description = truncated.trim();
+        // Ensure we didn't exceed 296 after trimming
+        if (description.length > 296) {
+          description = description.substring(0, 296);
+        }
+      }
+      
+      // FINAL STEP: Always add " ..." (space + 3 dots) to make exactly 300 characters total
+      // This ensures every description is exactly 300 chars: 296 text + 1 space + 3 dots
+      description = description + ' ...';
+      
+      // Final safety check: if somehow it exceeds 300, force it to 296 + " ..."
       if (description.length > 300) {
-        description = description.substring(0, 300) + '...';
+        description = description.substring(0, 296) + ' ...';
       }
 
       // For Gazeta Express images, use the proxy to bypass hotlinking protection
@@ -876,6 +915,13 @@ if (!imageUrl) {
         finalFullContent = finalFullContent.replace(/&#x([0-9a-fA-F]+);/g, (_match: string, hex: string) => {
           return String.fromCharCode(parseInt(hex, 16));
         });
+        // Decode Albanian-specific named entities (for Bota Sot and other sources)
+        finalFullContent = finalFullContent.replace(/&euml;/g, 'ë');
+        finalFullContent = finalFullContent.replace(/&Euml;/g, 'Ë');
+        finalFullContent = finalFullContent.replace(/&ccedil;/g, 'ç');
+        finalFullContent = finalFullContent.replace(/&Ccedil;/g, 'Ç');
+        finalFullContent = finalFullContent.replace(/&uuml;/g, 'ü');
+        finalFullContent = finalFullContent.replace(/&Uuml;/g, 'Ü');
         // Handle common named entities
         finalFullContent = finalFullContent.replace(/&quot;/g, '"');
         finalFullContent = finalFullContent.replace(/&apos;/g, "'");
