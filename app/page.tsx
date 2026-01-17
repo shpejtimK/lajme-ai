@@ -25,105 +25,146 @@ interface NewsFeed {
   items: NewsItem[];
 }
 
-// Category definitions with comprehensive keywords and patterns
+// Category definitions with strict, specific keywords
 const CATEGORIES = [
-  { id: 'all', name: 'Të gjitha', keywords: [] },
+  { id: 'all', name: 'Të gjitha', keywords: [], minScore: 0 },
   { 
     id: 'politike', 
     name: 'Politikë', 
     keywords: [
-      'qeveri', 'parti', 'ministër', 'kryeministër', 'president', 'parlament', 'zyrtar', 'politik', 
-      'votim', 'zgjedhje', 'deputet', 'albin kurti', 'vetëvendosje', 'ldk', 'pdk', 'akr', 
-      'coalicion', 'koalicion', 'opozitë', 'opozita', 'qeverisje', 'shtet', 'shteti', 'shtetëror',
-      'zyrtarë', 'politikan', 'politikës', 'kryeministri', 'ministri', 'presidenti', 'parlamenti',
-      'asambelë', 'asambleja', 'kabinetti', 'kabinet', 'qeveria', 'ministria', 'ministri',
-      'marrëveshje', 'protokoll', 'takim', 'bisedim', 'diskutim politik', 'politika',
-      'reforma', 'legjislacion', 'ligj', 'ligje', 'vendim', 'vendime', 'dekret', 'urdhër',
-      'amandament', 'referendum', 'kandidat', 'kandidati', 'fushata', 'kampanjë'
+      // Government & officials
+      'qeveri', 'kryeministër', 'kryeministri', 'ministër', 'ministri', 'ministria',
+      'president', 'presidenti', 'parlament', 'parlamenti', 'deputet', 'deputetë',
+      'zyrtar', 'zyrtarë', 'asambelë', 'asambleja', 'kabinetti', 'kabinet',
+      // Political parties (Kosovo specific)
+      'ldk', 'pdk', 'akr', 'vetëvendosje', 'coalicion', 'koalicion', 'opozitë', 'opozita',
+      'albin kurti', 'vjosa osmani', 'hashim thaçi', 'ibrahim rugova',
+      // Political actions
+      'votim', 'zgjedhje', 'referendum', 'kandidat', 'kandidati', 'fushata', 'kampanjë',
+      'amandament', 'legjislacion', 'reforma politike', 'politika e jashtme',
+      // State & governance
+      'shtet', 'shteti', 'shtetëror', 'qeverisje', 'qeveria',
+      'marrëveshje politike', 'protokoll shtetëror', 'takim diplomatik',
+      // Kosovo politics
+      'kosovë', 'kosova', 'prishtinë', 'shteti i kosovës'
     ],
     patterns: [
-      /(ministri|ministër|kryeministri|presidenti|parlamenti|deputet)/i,
-      /(ldk|pdk|akr|vetëvendosje|coalicion)/i,
-      /(qeveri|shtet|politik)/i
-    ]
+      /(ministri|ministër|kryeministri|presidenti|parlamenti|deputet).*(kosov|shtet|qeveri)/i,
+      /(ldk|pdk|akr|vetëvendosje|coalicion).*(parti|qeveri|opozit)/i,
+      /(qeveri|shtet|politik).*(vendim|takim|marrëveshje)/i
+    ],
+    minScore: 5 // Require high confidence for politics
   },
   { 
     id: 'showbiz', 
     name: 'Show-Biz', 
     keywords: [
-      'showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje', 'fam', 'celebritet', 
-      'yje', 'aktori', 'aktore', 'këngëtar', 'këngëtare', 'instagram', 'social media', 
-      'postim', 'post në', 'facebook post', 'facebook postim', 'tiktok', 'youtube',
-      'influencer', 'bloger', 'blogu', 'stars', 'star', 'muzik', 'muzikë', 'album',
-      'këngë', 'kënga', 'premierë', 'premiere', 'film', 'serial', 'televizion', 'tv show',
-      'program', 'reality show', 'talent show', 'festival', 'koncert', 'event',
-      'foto', 'fotograf', 'fashion week', 'modë', 'model', 'dizajner', 'dizajn',
-      'magazina', 'intervistë', 'celebrity', 'famous', 'star', 'superstar'
+      // Entertainment keywords
+      'showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje',
+      // Celebrities & stars
+      'celebritet', 'yje', 'star', 'stars', 'superstar', 'famous', 'celebrity',
+      'aktori', 'aktore', 'këngëtar', 'këngëtare', 'artist', 'artiste',
+      // Music & albums
+      'album', 'këngë', 'kënga', 'muzik', 'muzikë', 'premierë', 'premiere',
+      'koncert', 'festival muzikor',
+      // Film & TV
+      'film', 'serial', 'televizion', 'tv show', 'reality show', 'talent show',
+      // Social media (only in entertainment context)
+      'instagram post', 'facebook post', 'tiktok video', 'youtube channel',
+      // Fashion & modeling
+      'fashion week', 'modë', 'model', 'supermodel', 'dizajner fashion',
+      // Interviews & media
+      'intervistë me', 'magazina showbiz'
     ],
     patterns: [
-      /(instagram|facebook|tiktok|youtube|social media)/i,
-      /(showbiz|show-biz|entertainment)/i,
-      /(këngëtar|aktori|celebritet|star)/i
-    ]
+      /(këngëtar|aktori|celebritet|star).*(këngë|album|film|serial)/i,
+      /(showbiz|show-biz|entertainment).*(yje|star|celebrity)/i,
+      /(instagram|facebook|tiktok).*(post|video).*(celebrity|star|famous)/i
+    ],
+    minScore: 4 // Require good confidence for showbiz
   },
   { 
     id: 'sport', 
     name: 'Sport', 
     keywords: [
-      'sport', 'futboll', 'basketboll', 'tenis', 'lojtar', 'ndeshje', 'trajner', 'ekip', 
-      'superliga', 'champions league', 'mundial', 'olimpik', 'atletikë', 'volejboll', 
-      'handboll', 'futbollist', 'basketbollist', 'tenisti', 'atlet', 'gimnastikë',
-      'not', 'notimi', 'notues', 'shah', 'shahist', 'box', 'boks', 'boksier',
-      'judokan', 'judo', 'karate', 'kung fu', 'taekwondo', 'peshëngritje', 'peshëngritës',
-      'stadium', 'arenë', 'arena', 'kampionat', 'championship', 'kupë', 'cup',
-      'ligë', 'liga', 'ndeshje', 'match', 'fitore', 'humbje', 'barazim', 'draw',
-      'gol', 'goal', 'piket', 'pike', 'points', 'skor', 'score', 'trajner', 'coach',
-      'drejtor sportiv', 'transfer', 'transferim', 'kontratë', 'kontrata',
-      'kampion', 'champion', 'rekord', 'record', 'olimpik', 'olympic'
+      // Sports names
+      'futboll', 'basketboll', 'tenis', 'volejboll', 'handboll', 'atletikë',
+      'gimnastikë', 'not', 'shah', 'box', 'boks', 'judo', 'karate',
+      // Players & teams
+      'futbollist', 'basketbollist', 'tenisti', 'lojtar', 'atlet', 'trajner', 'ekip',
+      // Competitions
+      'superliga', 'champions league', 'mundial', 'olimpik', 'olympic',
+      'kampionat', 'championship', 'kupë', 'cup', 'ligë', 'liga',
+      // Match terminology
+      'ndeshje', 'match', 'fitore', 'humbje', 'barazim', 'gol', 'goal',
+      'piket', 'pike', 'points', 'skor', 'score', 'rekord', 'record',
+      // Sports infrastructure
+      'stadium', 'arenë', 'arena',
+      // Sports business
+      'transfer', 'transferim', 'kontratë sportive', 'drejtor sportiv'
     ],
     patterns: [
-      /(futboll|basketboll|tenis|volejboll|handboll|sport)/i,
-      /(superliga|champions league|mundial|olimpik)/i,
-      /(lojtar|trajner|ekip|ndeshje)/i
-    ]
+      /(futboll|basketboll|tenis|volejboll|handboll).*(lojtar|ndeshje|ekip|trajner)/i,
+      /(superliga|champions league|mundial|olimpik|kampionat)/i,
+      /(ndeshje|match|gol|goal|fitore|humbje).*(sport|futboll|basketboll)/i
+    ],
+    minScore: 5 // Require high confidence for sport
   },
   { 
     id: 'teknologji', 
     name: 'Teknologji', 
     keywords: [
-      'teknologji', 'digital', 'internet', 'aplikacion', 'softuer', 'harduer', 
-      'kompjuter', 'telefoni', 'smartphone', 'ai', 'artificial intelligence', 
-      'cyber', 'teknologji', 'robot', 'robotik', 'automatizim', 'automatik',
-      'informatikë', 'programim', 'programues', 'kod', 'software', 'hardware',
-      'app', 'aplikacion', 'mobil', 'tablet', 'laptop', 'pc', 'server',
-      'cloud', 'cloud computing', 'data', 'database', 'baza të dhënash',
+      // Tech core terms
+      'teknologji', 'teknologji e re', 'inovacion teknologjik', 'tech',
+      // Software & Hardware
+      'softuer', 'harduer', 'software', 'hardware', 'aplikacion', 'app',
+      // Devices
+      'kompjuter', 'smartphone', 'telefoni inteligjent', 'tablet', 'laptop', 'pc',
+      'gadget', 'device teknologjik',
+      // AI & Robotics
+      'ai', 'artificial intelligence', 'inteligjencë artificiale',
+      'robot', 'robotik', 'automatizim', 'machine learning',
+      // Programming & Development
+      'programim', 'programues', 'kod', 'coding', 'developer', 'programues',
+      'informatikë', 'kompjuterike',
+      // Cybersecurity
       'cybersecurity', 'siguria cyber', 'hacker', 'hacking', 'virus', 'malware',
+      // Blockchain & Crypto
       'blockchain', 'crypto', 'kripto', 'bitcoin', 'ethereum', 'nft',
-      'startup', 'tech company', 'kompani teknologjie', 'innovation', 'inovacion',
-      'gadget', 'device', 'teknologji e re', 'teknologji e ardhshme', 'future tech',
-      '5g', '6g', 'internet i shpejtë', 'wi-fi', 'bluetooth', 'usb', 'cable',
-      'screen', 'ekran', 'display', 'monitor', 'keyboard', 'mouse', 'mouse pad'
+      // Cloud & Data
+      'cloud computing', 'cloud', 'data center', 'database', 'baza të dhënash',
+      // Internet & Networks
+      '5g', '6g', 'wi-fi', 'internet i shpejtë', 'broadband',
+      // Tech Companies
+      'tech company', 'kompani teknologjie', 'startup teknologjik',
+      'apple', 'google', 'microsoft', 'meta', 'amazon web services',
+      // Innovation
+      'inovacion', 'innovation', 'teknologji e ardhshme', 'future tech'
     ],
     patterns: [
-      /(teknologji|digital|internet|cyber|ai|artificial intelligence)/i,
-      /(kompjuter|smartphone|software|hardware|app)/i,
-      /(robot|blockchain|crypto|startup|innovation)/i
-    ]
+      /(teknologji|tech|software|hardware).*(kompjuter|smartphone|app|aplikacion)/i,
+      /(ai|artificial intelligence|inteligjencë artificiale|robot)/i,
+      /(blockchain|crypto|bitcoin|ethereum|nft)/i,
+      /(apple|google|microsoft|meta|amazon).*(teknologji|tech|product)/i
+    ],
+    minScore: 6 // Require highest confidence for technology
   }
 ];
 
 /**
- * Deep category detection with scoring system
- * Checks title, description, content, categories, and URL patterns
+ * Strict category detection with confidence scoring
+ * Only categorizes news with high confidence to avoid false positives
  */
 function detectCategory(item: NewsItem): string {
-  const searchText = `${item.title} ${item.description} ${item.fullContent}`.toLowerCase();
+  const titleLower = (item.title || '').toLowerCase();
+  const descriptionLower = (item.description || '').toLowerCase();
+  const fullContentLower = (item.fullContent || '').toLowerCase();
   const linkLower = (item.link || '').toLowerCase();
   const categoriesLower = (item.categories || []).map(cat => 
     typeof cat === 'string' ? cat.toLowerCase() : String(cat).toLowerCase()
   ).join(' ');
   
-  const allText = `${searchText} ${linkLower} ${categoriesLower}`.toLowerCase();
+  const allText = `${titleLower} ${descriptionLower} ${fullContentLower} ${linkLower} ${categoriesLower}`;
   
   // Scoring system: each category gets points for matches
   const scores: { [key: string]: number } = {
@@ -138,35 +179,43 @@ function detectCategory(item: NewsItem): string {
     if (category.id === 'all') continue;
     
     const categoryId = category.id;
+    const minScore = category.minScore || 3;
     
-    // 1. Check keywords in all text (weight: 2 points)
+    // 1. Check keywords - prioritize title matches
     for (const keyword of category.keywords) {
       const keywordLower = keyword.toLowerCase();
-      if (allText.includes(keywordLower)) {
+      const keywordLength = keywordLower.length;
+      
+      // Only match whole words or phrases (not substrings in the middle of words)
+      const keywordRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      
+      if (keywordRegex.test(titleLower)) {
+        // Title matches are worth more (5 points)
+        scores[categoryId] += 5;
+      } else if (keywordRegex.test(descriptionLower)) {
+        // Description matches (3 points)
+        scores[categoryId] += 3;
+      } else if (keywordRegex.test(allText)) {
+        // General text matches (2 points)
         scores[categoryId] += 2;
-        
-        // Bonus points if keyword is in title (weight: 3 points)
-        if (item.title.toLowerCase().includes(keywordLower)) {
-          scores[categoryId] += 3;
-        }
-        
-        // Bonus if keyword is in RSS categories (weight: 4 points)
-        if (categoriesLower.includes(keywordLower)) {
-          scores[categoryId] += 4;
-        }
+      }
+      
+      // RSS categories are very reliable (4 points)
+      if (categoriesLower.includes(keywordLower)) {
+        scores[categoryId] += 4;
       }
     }
     
-    // 2. Check regex patterns (weight: 5 points)
+    // 2. Check regex patterns (high confidence - 8 points)
     if (category.patterns) {
       for (const pattern of category.patterns) {
         if (pattern.test(allText)) {
-          scores[categoryId] += 5;
+          scores[categoryId] += 8;
         }
       }
     }
     
-    // 3. Check URL patterns for specific categories
+    // 3. URL patterns (medium confidence - 3 points)
     if (categoryId === 'sport' && /(sport|futboll|basketboll|tenis)/i.test(linkLower)) {
       scores[categoryId] += 3;
     }
@@ -181,19 +230,26 @@ function detectCategory(item: NewsItem): string {
     }
   }
   
-  // Find category with highest score
+  // Find category with highest score that meets minimum threshold
   let maxScore = 0;
   let detectedCategory = 'all';
   
-  for (const [categoryId, score] of Object.entries(scores)) {
-    if (score > maxScore) {
+  for (const category of CATEGORIES) {
+    if (category.id === 'all') continue;
+    
+    const categoryId = category.id;
+    const score = scores[categoryId];
+    const minScore = category.minScore || 3;
+    
+    // Only consider categories that meet minimum threshold
+    if (score >= minScore && score > maxScore) {
       maxScore = score;
       detectedCategory = categoryId;
     }
   }
   
-  // Only return a category if it has a meaningful score (at least 2 points)
-  return maxScore >= 2 ? detectedCategory : 'all';
+  // Return 'all' if no category meets the confidence threshold
+  return detectedCategory;
 }
 
 /**
