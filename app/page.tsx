@@ -114,52 +114,46 @@ const CATEGORIES = [
     id: 'teknologji', 
     name: 'Teknologji', 
     keywords: [
-      // Major Tech Companies (highest priority)
-      'apple', 'iphone', 'ipad', 'macbook', 'mac', 'ios', 'app store',
-      'samsung', 'galaxy', 'android', 'samsung phone',
-      'tesla', 'model s', 'model 3', 'model y', 'model x', 'cybertruck', 'tesla car', 'elon musk tesla',
-      'microsoft', 'windows', 'office', 'azure', 'xbox', 'surface',
-      'google', 'chrome', 'youtube', 'android', 'pixel', 'google cloud',
-      'meta', 'facebook', 'instagram', 'whatsapp', 'oculus', 'meta quest',
-      'amazon', 'aws', 'alexa', 'amazon prime', 'kindle',
-      'netflix', 'spotify', 'zoom', 'nvidia', 'intel', 'amd', 'qualcomm',
-      'tesla motors', 'spacex', 'elon musk',
-      // Tech Products & Brands
-      'smartphone', 'iphone', 'samsung galaxy', 'pixel phone', 'oneplus',
-      'laptop', 'macbook', 'surface laptop', 'chromebook',
-      'tablet', 'ipad', 'samsung tablet',
-      'smartwatch', 'apple watch', 'samsung watch',
-      'electric vehicle', 'ev', 'tesla car', 'electric car',
-      // AI & Tech Terms (only with tech context)
-      'artificial intelligence', 'ai technology', 'chatgpt', 'openai', 'gpt',
-      'robot', 'robotics', 'drone', 'tesla robot',
-      // Software & Apps (specific tech products)
-      'software update', 'app update', 'ios update', 'android update',
-      'cybersecurity', 'data breach', 'hacker attack',
-      'blockchain', 'cryptocurrency', 'bitcoin', 'ethereum',
-      '5g network', '6g technology', 'wi-fi 6',
-      'cloud computing', 'aws', 'azure', 'google cloud'
+      // Major Tech Companies - Product specific only
+      'iphone', 'ipad', 'macbook', 'ios', 'app store', 'apple watch',
+      'samsung galaxy', 'samsung phone', 'samsung tablet', 'samsung watch',
+      'tesla model', 'cybertruck', 'tesla car', 'tesla motors', 'spacex rocket',
+      'microsoft windows', 'microsoft azure', 'xbox console', 'surface laptop',
+      'google pixel', 'google cloud', 'chrome browser', 'android phone',
+      'amazon alexa', 'amazon kindle', 'aws cloud', 'amazon prime video',
+      'netflix streaming', 'spotify premium', 'zoom meeting', 'nvidia gpu', 'intel processor', 'amd cpu', 'qualcomm chip',
+      // Tech Products - Must be specific
+      'iphone release', 'ipad pro', 'macbook air', 'macbook pro',
+      'galaxy s', 'galaxy note', 'pixel phone',
+      'tesla cybertruck', 'tesla model s', 'tesla model 3', 'tesla model y',
+      'electric car', 'ev vehicle',
+      // AI & Tech Terms - Specific products only
+      'chatgpt', 'openai gpt', 'artificial intelligence ai',
+      'tesla robot', 'robotics technology',
+      // Software & Apps - Specific tech updates only
+      'ios update', 'android update', 'windows update',
+      'cybersecurity breach', 'data breach tech',
+      'bitcoin cryptocurrency', 'ethereum blockchain', 'blockchain technology',
+      '5g network', '6g technology',
+      'cloud computing aws', 'azure cloud'
     ],
     patterns: [
-      // Tech companies with product names
-      /(apple|iphone|ipad|macbook|ios|app store)/i,
-      /(samsung|galaxy|samsung phone|samsung tablet)/i,
-      /(tesla|model s|model 3|model y|cybertruck|tesla car|elon musk tesla)/i,
-      /(microsoft|windows|azure|xbox|surface)/i,
-      /(google|chrome|pixel|android phone)/i,
-      /(meta|facebook|instagram|whatsapp|oculus)/i,
-      /(amazon|aws|alexa|kindle)/i,
-      /(nvidia|intel|amd|qualcomm)/i,
-      // Tech products
-      /(smartphone|iphone|galaxy|pixel).*(release|launch|update)/i,
-      /(laptop|macbook|surface).*(new|release|launch)/i,
-      /(electric vehicle|ev|tesla).*(car|vehicle|model)/i,
-      // AI with tech context
-      /(chatgpt|openai|artificial intelligence).*(technology|tech|ai)/i,
-      // Tech updates
-      /(software|app|ios|android).*(update|upgrade|release)/i
+      // Require company + product combination
+      /(apple|iphone|ipad|macbook).*(release|launch|update|new|announce)/i,
+      /(samsung|galaxy).*(phone|tablet|release|launch)/i,
+      /(tesla|cybertruck|model s|model 3|model y).*(car|vehicle|release|launch)/i,
+      /(microsoft|windows|azure|xbox|surface).*(release|update|launch)/i,
+      /(google|pixel|chrome|android).*(phone|release|update)/i,
+      /(amazon|alexa|aws|kindle).*(release|update|launch)/i,
+      /(nvidia|intel|amd|qualcomm).*(chip|processor|gpu|cpu|release)/i,
+      // AI products
+      /(chatgpt|openai|gpt-).*(release|update|version|technology)/i,
+      // Tech product releases
+      /(smartphone|iphone|galaxy|pixel|tesla).*(release|launch|announce|new model)/i,
+      // Crypto/Blockchain
+      /(bitcoin|ethereum|blockchain|cryptocurrency).*(price|technology|trading)/i
     ],
-    minScore: 8 // Very high threshold - only clear tech news
+    minScore: 12 // Extremely high threshold - require multiple strong matches
   }
 ];
 
@@ -196,43 +190,43 @@ function detectCategory(item: NewsItem): string {
     // 1. Check keywords - prioritize title matches
     for (const keyword of category.keywords) {
       const keywordLower = keyword.toLowerCase();
-      const keywordLength = keywordLower.length;
       
       // Only match whole words or phrases (not substrings in the middle of words)
       const keywordRegex = new RegExp(`\\b${keywordLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
       
       if (keywordRegex.test(titleLower)) {
-        // Title matches are worth more (5 points)
-        scores[categoryId] += 5;
+        // Title matches are worth more (6 points for tech, 5 for others)
+        scores[categoryId] += categoryId === 'teknologji' ? 6 : 5;
       } else if (keywordRegex.test(descriptionLower)) {
-        // Description matches (3 points)
-        scores[categoryId] += 3;
+        // Description matches (4 points for tech, 3 for others)
+        scores[categoryId] += categoryId === 'teknologji' ? 4 : 3;
       } else if (keywordRegex.test(allText)) {
-        // General text matches (2 points)
-        scores[categoryId] += 2;
+        // General text matches (3 points for tech, 2 for others)
+        scores[categoryId] += categoryId === 'teknologji' ? 3 : 2;
       }
       
-      // RSS categories are very reliable (4 points)
+      // RSS categories are very reliable (5 points for tech, 4 for others)
       if (categoriesLower.includes(keywordLower)) {
-        scores[categoryId] += 4;
+        scores[categoryId] += categoryId === 'teknologji' ? 5 : 4;
       }
     }
     
-    // 2. Check regex patterns (high confidence - 8 points)
+    // 2. Check regex patterns (high confidence - 10 points for tech, 8 for others)
     if (category.patterns) {
       for (const pattern of category.patterns) {
         if (pattern.test(allText)) {
-          scores[categoryId] += 8;
+          scores[categoryId] += categoryId === 'teknologji' ? 10 : 8;
         }
       }
     }
     
-    // 3. URL patterns (medium confidence - 3 points)
+    // 3. URL patterns (only for tech if very specific)
     if (categoryId === 'sport' && /(sport|futboll|basketboll|tenis)/i.test(linkLower)) {
       scores[categoryId] += 3;
     }
-    if (categoryId === 'teknologji' && /(tech|teknologji|digital)/i.test(linkLower)) {
-      scores[categoryId] += 3;
+    // Only count tech URL if it has specific tech terms
+    if (categoryId === 'teknologji' && /(apple|samsung|tesla|microsoft|google|amazon|tech|technology).*(release|product|update)/i.test(linkLower)) {
+      scores[categoryId] += 5;
     }
     if (categoryId === 'showbiz' && /(showbiz|entertainment|celebrity)/i.test(linkLower)) {
       scores[categoryId] += 3;
