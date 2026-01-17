@@ -284,6 +284,52 @@ a {
 }
 
 
+/* Categories Filter */
+.categories-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+}
+
+.category-button {
+  padding: 0.65rem 1.25rem;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.category-button:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.category-button.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-md), var(--glow);
+}
+
+.category-button.active:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
 /* Action Bar */
 .action-bar {
   display: flex;
@@ -1224,6 +1270,18 @@ a {
     justify-content: center;
   }
   
+  /* Categories filter mobile */
+  .categories-filter {
+    gap: 0.5rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .category-button {
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+  }
+  
   /* Action bar mobile */
   .action-bar {
     margin-bottom: 1.5rem;
@@ -1311,6 +1369,18 @@ a {
   .partners-show-button {
     font-size: 0.65rem;
     padding: 0.4rem 0.6rem;
+  }
+  
+  /* Categories filter mobile - very small screens */
+  .categories-filter {
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    margin-bottom: 1.25rem;
+  }
+  
+  .category-button {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.8rem;
   }
   
   /* Action bar mobile */

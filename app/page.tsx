@@ -15,6 +15,7 @@ interface NewsItem {
   imageUrl: string | null;
   guid: string;
   source: string;
+  detectedCategory?: string;
 }
 
 interface NewsFeed {
@@ -22,6 +23,92 @@ interface NewsFeed {
   link: string;
   description: string;
   items: NewsItem[];
+}
+
+// Category definitions with keywords
+const CATEGORIES = [
+  { id: 'all', name: 'Të gjitha', keywords: [] },
+  { 
+    id: 'politike', 
+    name: 'Politikë', 
+    keywords: ['qeveri', 'parti', 'ministër', 'kryeministër', 'president', 'parlament', 'zyrtar', 'politik', 'votim', 'zgjedhje', 'deputet', 'albin kurti', 'vetëvendosje', 'ldk', 'pdk', 'akr', 'coalicion', 'koalicion', 'opozitë', 'opozita']
+  },
+  { 
+    id: 'ekonomi', 
+    name: 'Ekonomi', 
+    keywords: ['ekonomi', 'ekonomike', 'tregti', 'biznes', 'kompani', 'banka', 'financa', 'investim', 'eksport', 'import', 'inflacion', 'buxhet', 'taks', 'taksa', 'gdp', 'pib']
+  },
+  { 
+    id: 'korrupsion', 
+    name: 'Korrupsion', 
+    keywords: ['korrupsion', 'korrupt', 'korruptim', 'hapje hetimi', 'prokurori', 'gjykatë', 'gjykatës', 'akuzë', 'denoncim', 'skandal', 'korrupsionit']
+  },
+  { 
+    id: 'societet', 
+    name: 'Shoqëri', 
+    keywords: ['shoqëri', 'shoqërisë', 'komunitet', 'qytetar', 'qytetarë', 'jetë', 'jeta', 'familje', 'tregim', 'histori', 'njerëz', 'popull']
+  },
+  { 
+    id: 'teknologji', 
+    name: 'Teknologji', 
+    keywords: ['teknologji', 'digital', 'internet', 'aplikacion', 'softuer', 'harduer', 'kompjuter', 'telefoni', 'smartphone', 'ai', 'artificial intelligence', 'cyber', 'teknologji']
+  },
+  { 
+    id: 'shendetesi', 
+    name: 'Shëndetësi', 
+    keywords: ['shëndetësi', 'spital', 'mjek', 'mjekësi', 'të sëmurë', 'sëmundje', 'farmaci', 'lloj', 'trajtim', 'operacion', 'urgjencë', 'health', 'hospital']
+  },
+  { 
+    id: 'arsim', 
+    name: 'Arsim', 
+    keywords: ['arsim', 'shkollë', 'universitet', 'student', 'nxënës', 'mësues', 'profesor', 'provim', 'diplomë', 'educim', 'education', 'school', 'university']
+  },
+  { 
+    id: 'kosove', 
+    name: 'Kosovë', 
+    keywords: ['kosovë', 'kosova', 'prishtinë', 'prishtina', 'prizren', 'pejë', 'mitrovicë', 'gjilan', 'ferizaj', 'gjakovë', 'kosovar', 'kosovare', 'kosova']
+  },
+  { 
+    id: 'rajoni', 
+    name: 'Rajoni', 
+    keywords: ['serbi', 'bosnjë', 'bosnje', 'kroat', 'maqedoni', 'mal të zi', 'crna gora', 'shqipëri', 'shqiperi', 'albania', 'ballkan', 'balkan', 'rajoni', 'regional']
+  },
+  { 
+    id: 'evropa', 
+    name: 'Evropë', 
+    keywords: ['evropë', 'europe', 'ue', 'eu', 'bashkim evropian', 'komision', 'komisioni', 'brussels', 'bruksel', 'nato', 'brigada', 'evropiane']
+  },
+  { 
+    id: 'siguri', 
+    name: 'Siguri', 
+    keywords: ['siguri', 'polici', 'polic', 'terrorizëm', 'terrorizem', 'bomba', 'eksplodim', 'armë', 'krim', 'kriminal', 'veprim', 'vrasje', 'security']
+  },
+  { 
+    id: 'infrastrukture', 
+    name: 'Infrastrukturë', 
+    keywords: ['rrugë', 'rruga', 'autostradë', 'autostrada', 'aeroport', 'tunel', 'ndërtim', 'ndërtues', 'projekt', 'infrastrukturë', 'infrastruktura', 'construction']
+  }
+];
+
+/**
+ * Detect category based on keywords in title, description, and content
+ */
+function detectCategory(item: NewsItem): string {
+  const searchText = `${item.title} ${item.description} ${item.fullContent}`.toLowerCase();
+  
+  // Check each category for keyword matches
+  for (const category of CATEGORIES) {
+    if (category.id === 'all') continue;
+    
+    for (const keyword of category.keywords) {
+      if (searchText.includes(keyword.toLowerCase())) {
+        return category.id;
+      }
+    }
+  }
+  
+  // Default to "societet" if no match found
+  return 'societet';
 }
 
 /**
@@ -33,6 +120,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isBenefiteAdHidden, setIsBenefiteAdHidden] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Hide/show ad (temporary, no localStorage)
   const toggleBenefiteAd = () => {
@@ -54,7 +142,15 @@ export default function Home() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
-      setNews(data);
+      // Add detected categories to news items
+      const newsWithCategories = {
+        ...data,
+        items: data.items.map((item: NewsItem) => ({
+          ...item,
+          detectedCategory: detectCategory(item)
+        }))
+      };
+      setNews(newsWithCategories);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error fetching news:', err);
@@ -160,6 +256,19 @@ export default function Home() {
       </header>
 
       <div className="container">
+        {/* Categories Filter */}
+        <div className="categories-filter">
+          {CATEGORIES.map((category) => (
+            <button
+              key={category.id}
+              className={`category-button ${selectedCategory === category.id ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(category.id)}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+
         {/* Action Bar */}
         <div className="action-bar">
           <button
@@ -204,7 +313,9 @@ export default function Home() {
         {/* News grid with modern cards */}
         {!loading && !error && news && (
           <div className="news-grid">
-            {news.items.map((item, index) => (
+            {news.items
+              .filter((item) => selectedCategory === 'all' || item.detectedCategory === selectedCategory)
+              .map((item, index) => (
               <article
                 key={item.guid}
                 className="news-card"
