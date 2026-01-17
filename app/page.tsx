@@ -267,7 +267,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isBenefiteAdHidden, setIsBenefiteAdHidden] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Hide/show ad (temporary, no localStorage)
   const toggleBenefiteAd = () => {
@@ -289,15 +288,7 @@ export default function Home() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
-      // Add detected categories to news items using deep analysis
-      const newsWithCategories = {
-        ...data,
-        items: data.items.map((item: NewsItem) => ({
-          ...item,
-          detectedCategory: detectCategory(item)
-        }))
-      };
-      setNews(newsWithCategories);
+      setNews(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       console.error('Error fetching news:', err);
@@ -403,20 +394,6 @@ export default function Home() {
       </header>
 
       <div className="container">
-        {/* Categories Filter - Futuristic Design */}
-        <div className="categories-filter">
-          {CATEGORIES.map((category) => (
-            <button
-              key={category.id}
-              className={`category-button-futuristic ${selectedCategory === category.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              <span className="category-button-glow"></span>
-              <span className="category-button-text">{category.name}</span>
-            </button>
-          ))}
-        </div>
-
         {/* Action Bar */}
         <div className="action-bar">
           <button
@@ -461,9 +438,7 @@ export default function Home() {
         {/* News grid with modern cards */}
         {!loading && !error && news && (
           <div className="news-grid">
-            {news.items
-              .filter((item) => selectedCategory === 'all' || item.detectedCategory === selectedCategory)
-              .map((item, index) => (
+            {news.items.map((item, index) => (
               <article
                 key={item.guid}
                 className="news-card"
