@@ -148,12 +148,12 @@ export default function Home() {
         <div className="header-background"></div>
         <div className="header-content">
           <div className="header-left">
-            <h1 className="logo-title">Lajme-AI</h1>
+            <h1 className="logo-title">LajmeAI</h1>
             <p className="logo-subtitle">Inteligjencë Artificiale për Lajme</p>
           </div>
           <div className="header-right">
             <p className="intro-text">
-              Lajme-AI i mbledh lajmet nga të gjitha portalet dhe i modifikon me Inteligjencë Artificiale për t'i paraqitur në mënyrë neutrale, pa asnjë ndikim politik, komercial apo të çfarëdo lloji tjetër.
+              LajmeAI i mbledh lajmet nga të gjitha portalet dhe i modifikon me Inteligjencë Artificiale për t'i paraqitur në mënyrë neutrale, pa asnjë ndikim politik, komercial apo të çfarëdo lloji tjetër.
             </p>
           </div>
         </div>
@@ -305,7 +305,7 @@ export default function Home() {
       
       {/* Footer */}
       <footer className="site-footer">
-        <p>© 2026 Lajme-AI. Të gjitha të drejtat e rezervuara.</p>
+        <p>© 2026 LajmeAI. Të gjitha të drejtat e rezervuara.</p>
       </footer>
     </main>
   );

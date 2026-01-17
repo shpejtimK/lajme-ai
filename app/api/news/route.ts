@@ -1026,7 +1026,7 @@ if (!imageUrl) {
     });
 
     return NextResponse.json({
-      title: 'Lajme-AI - News Aggregator',
+      title: 'LajmeAI - News Aggregator',
       link: '',
       description: 'News from multiple sources',
       items: newsItems,

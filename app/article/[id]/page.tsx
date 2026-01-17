@@ -105,7 +105,7 @@ export default function ArticlePage() {
         <div className="header-background"></div>
         <div className="header-content">
           <div className="logo-text">
-            <h1 className="logo-title">Lajme-AI</h1>
+            <h1 className="logo-title">LajmeAI</h1>
           </div>
         </div>
       </header>
@@ -169,7 +169,7 @@ export default function ArticlePage() {
       
       {/* Footer */}
       <footer className="site-footer">
-        <p>© 2026 Lajme-AI. Të gjitha të drejtat e rezervuara.</p>
+        <p>© 2026 LajmeAI. Të gjitha të drejtat e rezervuara.</p>
       </footer>
     </main>
   );
