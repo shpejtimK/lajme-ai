@@ -5,10 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
  * GET /api/image-proxy?url=<encoded-image-url>&referer=<optional-article-url>
  */
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const imageUrl = searchParams.get('url');
+  const refererUrl = searchParams.get('referer');
+  
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const imageUrl = searchParams.get('url');
-    const refererUrl = searchParams.get('referer');
 
     if (!imageUrl) {
       return NextResponse.json(
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
     console.error('Error details:', {
       message: error?.message,
       stack: error?.stack,
-      url: imageUrl,
+      url: imageUrl || 'unknown',
     });
     return NextResponse.json(
       { 
