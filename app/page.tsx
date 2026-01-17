@@ -34,59 +34,19 @@ const CATEGORIES = [
     keywords: ['qeveri', 'parti', 'ministër', 'kryeministër', 'president', 'parlament', 'zyrtar', 'politik', 'votim', 'zgjedhje', 'deputet', 'albin kurti', 'vetëvendosje', 'ldk', 'pdk', 'akr', 'coalicion', 'koalicion', 'opozitë', 'opozita']
   },
   { 
-    id: 'ekonomi', 
-    name: 'Ekonomi', 
-    keywords: ['ekonomi', 'ekonomike', 'tregti', 'biznes', 'kompani', 'banka', 'financa', 'investim', 'eksport', 'import', 'inflacion', 'buxhet', 'taks', 'taksa', 'gdp', 'pib']
+    id: 'showbiz', 
+    name: 'Show-Biz', 
+    keywords: ['showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje', 'fam', 'celebritet', 'yje', 'aktori', 'aktore', 'këngëtar', 'këngëtare', 'instagram', 'social media', 'postim', 'post në']
   },
   { 
-    id: 'korrupsion', 
-    name: 'Korrupsion', 
-    keywords: ['korrupsion', 'korrupt', 'korruptim', 'hapje hetimi', 'prokurori', 'gjykatë', 'gjykatës', 'akuzë', 'denoncim', 'skandal', 'korrupsionit']
-  },
-  { 
-    id: 'societet', 
-    name: 'Shoqëri', 
-    keywords: ['shoqëri', 'shoqërisë', 'komunitet', 'qytetar', 'qytetarë', 'jetë', 'jeta', 'familje', 'tregim', 'histori', 'njerëz', 'popull']
+    id: 'sport', 
+    name: 'Sport', 
+    keywords: ['sport', 'futboll', 'basketboll', 'tenis', 'lojtar', 'ndeshje', 'trajner', 'ekip', 'superliga', 'champions league', 'mundial', 'olimpik', 'atletikë', 'volejboll', 'handboll']
   },
   { 
     id: 'teknologji', 
     name: 'Teknologji', 
     keywords: ['teknologji', 'digital', 'internet', 'aplikacion', 'softuer', 'harduer', 'kompjuter', 'telefoni', 'smartphone', 'ai', 'artificial intelligence', 'cyber', 'teknologji']
-  },
-  { 
-    id: 'shendetesi', 
-    name: 'Shëndetësi', 
-    keywords: ['shëndetësi', 'spital', 'mjek', 'mjekësi', 'të sëmurë', 'sëmundje', 'farmaci', 'lloj', 'trajtim', 'operacion', 'urgjencë', 'health', 'hospital']
-  },
-  { 
-    id: 'arsim', 
-    name: 'Arsim', 
-    keywords: ['arsim', 'shkollë', 'universitet', 'student', 'nxënës', 'mësues', 'profesor', 'provim', 'diplomë', 'educim', 'education', 'school', 'university']
-  },
-  { 
-    id: 'kosove', 
-    name: 'Kosovë', 
-    keywords: ['kosovë', 'kosova', 'prishtinë', 'prishtina', 'prizren', 'pejë', 'mitrovicë', 'gjilan', 'ferizaj', 'gjakovë', 'kosovar', 'kosovare', 'kosova']
-  },
-  { 
-    id: 'rajoni', 
-    name: 'Rajoni', 
-    keywords: ['serbi', 'bosnjë', 'bosnje', 'kroat', 'maqedoni', 'mal të zi', 'crna gora', 'shqipëri', 'shqiperi', 'albania', 'ballkan', 'balkan', 'rajoni', 'regional']
-  },
-  { 
-    id: 'evropa', 
-    name: 'Evropë', 
-    keywords: ['evropë', 'europe', 'ue', 'eu', 'bashkim evropian', 'komision', 'komisioni', 'brussels', 'bruksel', 'nato', 'brigada', 'evropiane']
-  },
-  { 
-    id: 'siguri', 
-    name: 'Siguri', 
-    keywords: ['siguri', 'polici', 'polic', 'terrorizëm', 'terrorizem', 'bomba', 'eksplodim', 'armë', 'krim', 'kriminal', 'veprim', 'vrasje', 'security']
-  },
-  { 
-    id: 'infrastrukture', 
-    name: 'Infrastrukturë', 
-    keywords: ['rrugë', 'rruga', 'autostradë', 'autostrada', 'aeroport', 'tunel', 'ndërtim', 'ndërtues', 'projekt', 'infrastrukturë', 'infrastruktura', 'construction']
   }
 ];
 
@@ -107,8 +67,8 @@ function detectCategory(item: NewsItem): string {
     }
   }
   
-  // Default to "societet" if no match found
-  return 'societet';
+  // Default to "all" if no match found (will show in all categories view)
+  return 'all';
 }
 
 /**
