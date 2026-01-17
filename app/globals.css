@@ -284,50 +284,155 @@ a {
 }
 
 
-/* Categories Filter */
+/* Categories Filter - Futuristic Design */
 .categories-filter {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 0;
+  position: relative;
 }
 
-.category-button {
-  padding: 0.65rem 1.25rem;
+.category-button-futuristic {
+  position: relative;
+  padding: 0.85rem 1.75rem;
   background: var(--bg-glass);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 12px;
   color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   white-space: nowrap;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  text-transform: uppercase;
+  z-index: 1;
 }
 
-.category-button:hover {
+.category-button-futuristic::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+  z-index: 0;
+}
+
+.category-button-futuristic:hover::before {
+  left: 100%;
+}
+
+.category-button-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent);
+  transition: width 0.4s ease, height 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.category-button-text {
+  position: relative;
+  z-index: 2;
+}
+
+.category-button-futuristic:hover {
   background: var(--bg-card-hover);
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 20px rgba(99, 102, 241, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-.category-button.active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+.category-button-futuristic:hover .category-button-glow {
+  width: 200%;
+  height: 200%;
+}
+
+.category-button-futuristic.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.95), rgba(139, 92, 246, 0.95));
+  border: 2px solid rgba(99, 102, 241, 0.8);
   color: white;
-  box-shadow: var(--shadow-md), var(--glow);
+  box-shadow: 
+    0 8px 32px rgba(99, 102, 241, 0.4),
+    0 0 30px rgba(99, 102, 241, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  animation: pulseGlow 2s ease-in-out infinite;
 }
 
-.category-button.active:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
-  transform: translateY(-2px);
+.category-button-futuristic.active::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, 
+    rgba(99, 102, 241, 0.5),
+    rgba(139, 92, 246, 0.5),
+    rgba(99, 102, 241, 0.5)
+  );
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+.category-button-futuristic.active:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 1), rgba(139, 92, 246, 1));
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 
+    0 12px 40px rgba(99, 102, 241, 0.5),
+    0 0 40px rgba(99, 102, 241, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 8px 32px rgba(99, 102, 241, 0.4),
+      0 0 30px rgba(99, 102, 241, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 8px 32px rgba(99, 102, 241, 0.6),
+      0 0 40px rgba(99, 102, 241, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Action Bar */
@@ -1272,14 +1377,14 @@ a {
   
   /* Categories filter mobile */
   .categories-filter {
-    gap: 0.5rem;
-    padding: 0.75rem 0;
-    margin-bottom: 1.5rem;
+    gap: 0.75rem;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
   }
   
-  .category-button {
-    padding: 0.55rem 1rem;
-    font-size: 0.85rem;
+  .category-button-futuristic {
+    padding: 0.7rem 1.35rem;
+    font-size: 0.8rem;
   }
   
   /* Action bar mobile */
@@ -1369,18 +1474,6 @@ a {
   .partners-show-button {
     font-size: 0.65rem;
     padding: 0.4rem 0.6rem;
-  }
-  
-  /* Categories filter mobile - very small screens */
-  .categories-filter {
-    gap: 0.4rem;
-    padding: 0.5rem 0;
-    margin-bottom: 1.25rem;
-  }
-  
-  .category-button {
-    padding: 0.5rem 0.85rem;
-    font-size: 0.8rem;
   }
   
   /* Action bar mobile */

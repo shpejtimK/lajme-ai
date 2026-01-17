@@ -25,50 +25,175 @@ interface NewsFeed {
   items: NewsItem[];
 }
 
-// Category definitions with keywords
+// Category definitions with comprehensive keywords and patterns
 const CATEGORIES = [
   { id: 'all', name: 'Të gjitha', keywords: [] },
   { 
     id: 'politike', 
     name: 'Politikë', 
-    keywords: ['qeveri', 'parti', 'ministër', 'kryeministër', 'president', 'parlament', 'zyrtar', 'politik', 'votim', 'zgjedhje', 'deputet', 'albin kurti', 'vetëvendosje', 'ldk', 'pdk', 'akr', 'coalicion', 'koalicion', 'opozitë', 'opozita']
+    keywords: [
+      'qeveri', 'parti', 'ministër', 'kryeministër', 'president', 'parlament', 'zyrtar', 'politik', 
+      'votim', 'zgjedhje', 'deputet', 'albin kurti', 'vetëvendosje', 'ldk', 'pdk', 'akr', 
+      'coalicion', 'koalicion', 'opozitë', 'opozita', 'qeverisje', 'shtet', 'shteti', 'shtetëror',
+      'zyrtarë', 'politikan', 'politikës', 'kryeministri', 'ministri', 'presidenti', 'parlamenti',
+      'asambelë', 'asambleja', 'kabinetti', 'kabinet', 'qeveria', 'ministria', 'ministri',
+      'marrëveshje', 'protokoll', 'takim', 'bisedim', 'diskutim politik', 'politika',
+      'reforma', 'legjislacion', 'ligj', 'ligje', 'vendim', 'vendime', 'dekret', 'urdhër',
+      'amandament', 'referendum', 'kandidat', 'kandidati', 'fushata', 'kampanjë'
+    ],
+    patterns: [
+      /(ministri|ministër|kryeministri|presidenti|parlamenti|deputet)/i,
+      /(ldk|pdk|akr|vetëvendosje|coalicion)/i,
+      /(qeveri|shtet|politik)/i
+    ]
   },
   { 
     id: 'showbiz', 
     name: 'Show-Biz', 
-    keywords: ['showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje', 'fam', 'celebritet', 'yje', 'aktori', 'aktore', 'këngëtar', 'këngëtare', 'instagram', 'social media', 'postim', 'post në']
+    keywords: [
+      'showbiz', 'show biz', 'show-biz', 'entertainment', 'zbavitje', 'fam', 'celebritet', 
+      'yje', 'aktori', 'aktore', 'këngëtar', 'këngëtare', 'instagram', 'social media', 
+      'postim', 'post në', 'facebook post', 'facebook postim', 'tiktok', 'youtube',
+      'influencer', 'bloger', 'blogu', 'stars', 'star', 'muzik', 'muzikë', 'album',
+      'këngë', 'kënga', 'premierë', 'premiere', 'film', 'serial', 'televizion', 'tv show',
+      'program', 'reality show', 'talent show', 'festival', 'koncert', 'event',
+      'foto', 'fotograf', 'fashion week', 'modë', 'model', 'dizajner', 'dizajn',
+      'magazina', 'intervistë', 'celebrity', 'famous', 'star', 'superstar'
+    ],
+    patterns: [
+      /(instagram|facebook|tiktok|youtube|social media)/i,
+      /(showbiz|show-biz|entertainment)/i,
+      /(këngëtar|aktori|celebritet|star)/i
+    ]
   },
   { 
     id: 'sport', 
     name: 'Sport', 
-    keywords: ['sport', 'futboll', 'basketboll', 'tenis', 'lojtar', 'ndeshje', 'trajner', 'ekip', 'superliga', 'champions league', 'mundial', 'olimpik', 'atletikë', 'volejboll', 'handboll']
+    keywords: [
+      'sport', 'futboll', 'basketboll', 'tenis', 'lojtar', 'ndeshje', 'trajner', 'ekip', 
+      'superliga', 'champions league', 'mundial', 'olimpik', 'atletikë', 'volejboll', 
+      'handboll', 'futbollist', 'basketbollist', 'tenisti', 'atlet', 'gimnastikë',
+      'not', 'notimi', 'notues', 'shah', 'shahist', 'box', 'boks', 'boksier',
+      'judokan', 'judo', 'karate', 'kung fu', 'taekwondo', 'peshëngritje', 'peshëngritës',
+      'stadium', 'arenë', 'arena', 'kampionat', 'championship', 'kupë', 'cup',
+      'ligë', 'liga', 'ndeshje', 'match', 'fitore', 'humbje', 'barazim', 'draw',
+      'gol', 'goal', 'piket', 'pike', 'points', 'skor', 'score', 'trajner', 'coach',
+      'drejtor sportiv', 'transfer', 'transferim', 'kontratë', 'kontrata',
+      'kampion', 'champion', 'rekord', 'record', 'olimpik', 'olympic'
+    ],
+    patterns: [
+      /(futboll|basketboll|tenis|volejboll|handboll|sport)/i,
+      /(superliga|champions league|mundial|olimpik)/i,
+      /(lojtar|trajner|ekip|ndeshje)/i
+    ]
   },
   { 
     id: 'teknologji', 
     name: 'Teknologji', 
-    keywords: ['teknologji', 'digital', 'internet', 'aplikacion', 'softuer', 'harduer', 'kompjuter', 'telefoni', 'smartphone', 'ai', 'artificial intelligence', 'cyber', 'teknologji']
+    keywords: [
+      'teknologji', 'digital', 'internet', 'aplikacion', 'softuer', 'harduer', 
+      'kompjuter', 'telefoni', 'smartphone', 'ai', 'artificial intelligence', 
+      'cyber', 'teknologji', 'robot', 'robotik', 'automatizim', 'automatik',
+      'informatikë', 'programim', 'programues', 'kod', 'software', 'hardware',
+      'app', 'aplikacion', 'mobil', 'tablet', 'laptop', 'pc', 'server',
+      'cloud', 'cloud computing', 'data', 'database', 'baza të dhënash',
+      'cybersecurity', 'siguria cyber', 'hacker', 'hacking', 'virus', 'malware',
+      'blockchain', 'crypto', 'kripto', 'bitcoin', 'ethereum', 'nft',
+      'startup', 'tech company', 'kompani teknologjie', 'innovation', 'inovacion',
+      'gadget', 'device', 'teknologji e re', 'teknologji e ardhshme', 'future tech',
+      '5g', '6g', 'internet i shpejtë', 'wi-fi', 'bluetooth', 'usb', 'cable',
+      'screen', 'ekran', 'display', 'monitor', 'keyboard', 'mouse', 'mouse pad'
+    ],
+    patterns: [
+      /(teknologji|digital|internet|cyber|ai|artificial intelligence)/i,
+      /(kompjuter|smartphone|software|hardware|app)/i,
+      /(robot|blockchain|crypto|startup|innovation)/i
+    ]
   }
 ];
 
 /**
- * Detect category based on keywords in title, description, and content
+ * Deep category detection with scoring system
+ * Checks title, description, content, categories, and URL patterns
  */
 function detectCategory(item: NewsItem): string {
   const searchText = `${item.title} ${item.description} ${item.fullContent}`.toLowerCase();
+  const linkLower = (item.link || '').toLowerCase();
+  const categoriesLower = (item.categories || []).map(cat => 
+    typeof cat === 'string' ? cat.toLowerCase() : String(cat).toLowerCase()
+  ).join(' ');
   
-  // Check each category for keyword matches
+  const allText = `${searchText} ${linkLower} ${categoriesLower}`.toLowerCase();
+  
+  // Scoring system: each category gets points for matches
+  const scores: { [key: string]: number } = {
+    politike: 0,
+    showbiz: 0,
+    sport: 0,
+    teknologji: 0
+  };
+  
+  // Check each category
   for (const category of CATEGORIES) {
     if (category.id === 'all') continue;
     
+    const categoryId = category.id;
+    
+    // 1. Check keywords in all text (weight: 2 points)
     for (const keyword of category.keywords) {
-      if (searchText.includes(keyword.toLowerCase())) {
-        return category.id;
+      const keywordLower = keyword.toLowerCase();
+      if (allText.includes(keywordLower)) {
+        scores[categoryId] += 2;
+        
+        // Bonus points if keyword is in title (weight: 3 points)
+        if (item.title.toLowerCase().includes(keywordLower)) {
+          scores[categoryId] += 3;
+        }
+        
+        // Bonus if keyword is in RSS categories (weight: 4 points)
+        if (categoriesLower.includes(keywordLower)) {
+          scores[categoryId] += 4;
+        }
       }
+    }
+    
+    // 2. Check regex patterns (weight: 5 points)
+    if (category.patterns) {
+      for (const pattern of category.patterns) {
+        if (pattern.test(allText)) {
+          scores[categoryId] += 5;
+        }
+      }
+    }
+    
+    // 3. Check URL patterns for specific categories
+    if (categoryId === 'sport' && /(sport|futboll|basketboll|tenis)/i.test(linkLower)) {
+      scores[categoryId] += 3;
+    }
+    if (categoryId === 'teknologji' && /(tech|teknologji|digital)/i.test(linkLower)) {
+      scores[categoryId] += 3;
+    }
+    if (categoryId === 'showbiz' && /(showbiz|entertainment|celebrity)/i.test(linkLower)) {
+      scores[categoryId] += 3;
+    }
+    if (categoryId === 'politike' && /(politik|qeveri|parti)/i.test(linkLower)) {
+      scores[categoryId] += 3;
     }
   }
   
-  // Default to "all" if no match found (will show in all categories view)
-  return 'all';
+  // Find category with highest score
+  let maxScore = 0;
+  let detectedCategory = 'all';
+  
+  for (const [categoryId, score] of Object.entries(scores)) {
+    if (score > maxScore) {
+      maxScore = score;
+      detectedCategory = categoryId;
+    }
+  }
+  
+  // Only return a category if it has a meaningful score (at least 2 points)
+  return maxScore >= 2 ? detectedCategory : 'all';
 }
 
 /**
@@ -102,7 +227,7 @@ export default function Home() {
         throw new Error('Failed to fetch news');
       }
       const data = await response.json();
-      // Add detected categories to news items
+      // Add detected categories to news items using deep analysis
       const newsWithCategories = {
         ...data,
         items: data.items.map((item: NewsItem) => ({
@@ -216,15 +341,16 @@ export default function Home() {
       </header>
 
       <div className="container">
-        {/* Categories Filter */}
+        {/* Categories Filter - Futuristic Design */}
         <div className="categories-filter">
           {CATEGORIES.map((category) => (
             <button
               key={category.id}
-              className={`category-button ${selectedCategory === category.id ? 'active' : ''}`}
+              className={`category-button-futuristic ${selectedCategory === category.id ? 'active' : ''}`}
               onClick={() => setSelectedCategory(category.id)}
             >
-              {category.name}
+              <span className="category-button-glow"></span>
+              <span className="category-button-text">{category.name}</span>
             </button>
           ))}
         </div>
