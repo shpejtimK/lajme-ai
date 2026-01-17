@@ -114,40 +114,52 @@ const CATEGORIES = [
     id: 'teknologji', 
     name: 'Teknologji', 
     keywords: [
-      // Tech core terms
-      'teknologji', 'teknologji e re', 'inovacion teknologjik', 'tech',
-      // Software & Hardware
-      'softuer', 'harduer', 'software', 'hardware', 'aplikacion', 'app',
-      // Devices
-      'kompjuter', 'smartphone', 'telefoni inteligjent', 'tablet', 'laptop', 'pc',
-      'gadget', 'device teknologjik',
-      // AI & Robotics
-      'ai', 'artificial intelligence', 'inteligjencë artificiale',
-      'robot', 'robotik', 'automatizim', 'machine learning',
-      // Programming & Development
-      'programim', 'programues', 'kod', 'coding', 'developer', 'programues',
-      'informatikë', 'kompjuterike',
-      // Cybersecurity
-      'cybersecurity', 'siguria cyber', 'hacker', 'hacking', 'virus', 'malware',
-      // Blockchain & Crypto
-      'blockchain', 'crypto', 'kripto', 'bitcoin', 'ethereum', 'nft',
-      // Cloud & Data
-      'cloud computing', 'cloud', 'data center', 'database', 'baza të dhënash',
-      // Internet & Networks
-      '5g', '6g', 'wi-fi', 'internet i shpejtë', 'broadband',
-      // Tech Companies
-      'tech company', 'kompani teknologjie', 'startup teknologjik',
-      'apple', 'google', 'microsoft', 'meta', 'amazon web services',
-      // Innovation
-      'inovacion', 'innovation', 'teknologji e ardhshme', 'future tech'
+      // Major Tech Companies (highest priority)
+      'apple', 'iphone', 'ipad', 'macbook', 'mac', 'ios', 'app store',
+      'samsung', 'galaxy', 'android', 'samsung phone',
+      'tesla', 'model s', 'model 3', 'model y', 'model x', 'cybertruck', 'tesla car', 'elon musk tesla',
+      'microsoft', 'windows', 'office', 'azure', 'xbox', 'surface',
+      'google', 'chrome', 'youtube', 'android', 'pixel', 'google cloud',
+      'meta', 'facebook', 'instagram', 'whatsapp', 'oculus', 'meta quest',
+      'amazon', 'aws', 'alexa', 'amazon prime', 'kindle',
+      'netflix', 'spotify', 'zoom', 'nvidia', 'intel', 'amd', 'qualcomm',
+      'tesla motors', 'spacex', 'elon musk',
+      // Tech Products & Brands
+      'smartphone', 'iphone', 'samsung galaxy', 'pixel phone', 'oneplus',
+      'laptop', 'macbook', 'surface laptop', 'chromebook',
+      'tablet', 'ipad', 'samsung tablet',
+      'smartwatch', 'apple watch', 'samsung watch',
+      'electric vehicle', 'ev', 'tesla car', 'electric car',
+      // AI & Tech Terms (only with tech context)
+      'artificial intelligence', 'ai technology', 'chatgpt', 'openai', 'gpt',
+      'robot', 'robotics', 'drone', 'tesla robot',
+      // Software & Apps (specific tech products)
+      'software update', 'app update', 'ios update', 'android update',
+      'cybersecurity', 'data breach', 'hacker attack',
+      'blockchain', 'cryptocurrency', 'bitcoin', 'ethereum',
+      '5g network', '6g technology', 'wi-fi 6',
+      'cloud computing', 'aws', 'azure', 'google cloud'
     ],
     patterns: [
-      /(teknologji|tech|software|hardware).*(kompjuter|smartphone|app|aplikacion)/i,
-      /(ai|artificial intelligence|inteligjencë artificiale|robot)/i,
-      /(blockchain|crypto|bitcoin|ethereum|nft)/i,
-      /(apple|google|microsoft|meta|amazon).*(teknologji|tech|product)/i
+      // Tech companies with product names
+      /(apple|iphone|ipad|macbook|ios|app store)/i,
+      /(samsung|galaxy|samsung phone|samsung tablet)/i,
+      /(tesla|model s|model 3|model y|cybertruck|tesla car|elon musk tesla)/i,
+      /(microsoft|windows|azure|xbox|surface)/i,
+      /(google|chrome|pixel|android phone)/i,
+      /(meta|facebook|instagram|whatsapp|oculus)/i,
+      /(amazon|aws|alexa|kindle)/i,
+      /(nvidia|intel|amd|qualcomm)/i,
+      // Tech products
+      /(smartphone|iphone|galaxy|pixel).*(release|launch|update)/i,
+      /(laptop|macbook|surface).*(new|release|launch)/i,
+      /(electric vehicle|ev|tesla).*(car|vehicle|model)/i,
+      // AI with tech context
+      /(chatgpt|openai|artificial intelligence).*(technology|tech|ai)/i,
+      // Tech updates
+      /(software|app|ios|android).*(update|upgrade|release)/i
     ],
-    minScore: 6 // Require highest confidence for technology
+    minScore: 8 // Very high threshold - only clear tech news
   }
 ];
 
