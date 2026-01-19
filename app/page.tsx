@@ -15,7 +15,6 @@ interface NewsItem {
   imageUrl: string | null;
   guid: string;
   source: string;
-  detectedCategory?: string;
 }
 
 interface NewsFeed {
