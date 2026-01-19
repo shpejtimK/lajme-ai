@@ -572,7 +572,7 @@ a {
 
 @media (max-width: 768px) {
   .partners-section {
-    top: 6rem;
+    top: 7rem;
     right: 0.75rem;
   }
   
@@ -593,11 +593,6 @@ a {
   .partners-title {
     font-size: 0.7rem;
     margin-bottom: 0.6rem;
-  }
-  
-  /* Add padding to intro-text to prevent overlap with partners section */
-  .intro-text {
-    padding-right: 7rem;
   }
 }
 
@@ -1364,7 +1359,6 @@ a {
     font-size: 0.95rem;
     line-height: 1.7;
     padding: 1.25rem;
-    padding-right: 7rem;
   }
 
   .news-grid {
@@ -1468,7 +1462,7 @@ a {
   
   /* Partners section - more compact on very small screens */
   .partners-section {
-    top: 5.5rem;
+    top: 6.5rem;
     right: 0.5rem;
   }
   
@@ -1480,11 +1474,6 @@ a {
   .partners-show-button {
     font-size: 0.65rem;
     padding: 0.4rem 0.6rem;
-  }
-  
-  /* Add padding to intro-text to prevent overlap with partners section */
-  .intro-text {
-    padding-right: 6rem;
   }
   
   /* Action bar mobile */
